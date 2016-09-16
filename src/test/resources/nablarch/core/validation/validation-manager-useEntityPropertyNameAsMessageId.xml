@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component-configuration xmlns="http://tis.co.jp/nablarch/component-configuration"
+                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <config-file file="db.config"/>
+    <import file="datasource.xml" />
+
+    <component name="dbManager" class="nablarch.core.db.transaction.SimpleDbTransactionManager"/>
+    <component class="nablarch.core.db.transaction.JdbcTransactionFactory"/>
+    <component class="nablarch.core.db.statement.exception.BasicSqlStatementExceptionFactory"/>
+    <component class="nablarch.core.db.connection.BasicDbConnectionFactoryForDataSource">
+        <property name="dataSource" ref="dataSource" />
+    </component>
+    <component name="statementFactory"
+               class="nablarch.core.db.statement.BasicStatementFactory"/>
+
+    <component name="stringResourceCache" class="nablarch.core.cache.BasicStaticDataCache">
+        <property name="loader">
+            <component class="nablarch.core.message.BasicStringResourceLoader">
+                <!-- メッセージリソーステーブル名 -->
+                <property name="tableName" value="TEST_MESSAGE"/>
+                <!-- メッセージリソーステーブル IDカラム名 -->
+                <property name="idColumnName" value="MESSAGE_ID"/>
+                <!-- メッセージリソーステーブル 言語カラム名 -->
+                <property name="langColumnName" value="LANG"/>
+                <!-- メッセージリソーステーブル メッセージカラム名 -->
+                <property name="valueColumnName" value="MESSAGE"/>
+            </component>
+        </property>
+        <!-- 初期ロード -->
+        <property name="loadOnStartup" value="false"/>
+    </component>
+
+    <component name="stringResourceHolder" class="nablarch.core.message.StringResourceHolder">
+        <property name="stringResourceCache" ref="stringResourceCache"/>
+    </component>
+
+    <component name="validationManager" class="nablarch.core.validation.ValidationManager">
+        <property name="useFormPropertyNameAsMessageId" value="true"/>
+        <property name="convertors">
+            <list>
+                <component class="nablarch.core.validation.convertor.StringConvertor">
+                    <property name="conversionFailedMessageId" value="MSG00001"/>
+                </component>
+                <component class="nablarch.core.validation.convertor.StringArrayConvertor">
+                </component>
+                <component class="nablarch.core.validation.convertor.LongConvertor">
+                    <property name="invalidDigitsIntegerMessageId" value="MSG00031"/>
+                    <property name="multiInputMessageId" value="MSG00001"/>
+                </component>
+                <component class="nablarch.core.validation.convertor.BigDecimalConvertor">
+                    <property name="invalidDigitsIntegerMessageId" value="MSG00031"/>
+                    <property name="invalidDigitsFractionMessageId" value="MSG00032"/>
+                    <property name="multiInputMessageId" value="MSG00001"/>
+                </component>
+            </list>
+        </property>
+        <property name="validators">
+            <list>
+                <component class="nablarch.core.validation.validator.RequiredValidator">
+                    <property name="messageId" value="MSG00011"/>
+                </component>
+                <component class="nablarch.core.validation.validator.NumberRangeValidator">
+                    <property name="maxMessageId" value="MSG00051"/>
+                    <property name="maxAndMinMessageId" value="MSG00052"/>
+                    <property name="minMessageId" value="MSG00053"/>
+                </component>
+                <component class="nablarch.core.validation.validator.LengthValidator">
+                    <property name="maxMessageId" value="MSG00021"/>
+                    <property name="maxAndMinMessageId" value="MSG00022"/>
+                    <property name="fixLengthMessageId" value="MSG00023"/>
+                </component>
+            </list>
+        </property>
+        <property name="formDefinitionCache">
+            <component name="formDefinitionCache" class="nablarch.core.cache.BasicStaticDataCache">
+                <property name="loader">
+                    <component class="nablarch.core.validation.FormValidationDefinitionLoader"/>
+                </property>
+            </component>
+        </property>
+    </component>
+
+</component-configuration>

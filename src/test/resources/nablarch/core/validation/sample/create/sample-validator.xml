@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component-configuration xmlns="http://tis.co.jp/nablarch/component-configuration"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         >
+
+	<import file="nablarch/core/validation/validation-manager.xml"/>
+
+    <component name="validationManager" class="nablarch.core.validation.ValidationManager">
+        <property name="validators">
+            <list>
+                <component class="nablarch.core.validation.validator.RequiredValidator">
+                    <property name="messageId" value="MSG00011"/>
+                </component>
+                <component class="nablarch.core.validation.validator.NumberRangeValidator">
+                    <property name="maxMessageId" value="MSG00051"/>
+                    <property name="maxAndMinMessageId" value="MSG00052"/>
+                    <property name="minMessageId" value="MSG00053"/>
+                </component>
+                <component class="nablarch.core.validation.validator.LengthValidator">
+                    <property name="maxMessageId" value="MSG00021"/>
+                    <property name="maxAndMinMessageId" value="MSG00022"/>
+                </component>
+                <component class="nablarch.core.validation.sample.create.SampleCheckValidator">
+                    <property name="allow0001MessageId" value="MSG00051"/>
+                    <property name="deny0001MessageId" value="MSG00052"/>
+                </component>
+            </list>
+        </property>
+    </component>
+	<component name="stringResourceHolder" class="nablarch.core.message.MockStringResourceHolder">
+	</component>
+
+</component-configuration>

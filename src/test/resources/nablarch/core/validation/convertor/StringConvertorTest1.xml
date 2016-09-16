@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component-configuration xmlns="http://tis.co.jp/nablarch/component-configuration">
+      <component name="stringConvertor"
+            class="nablarch.core.validation.convertor.StringConvertor">
+            <property name="conversionFailedMessageId" value="MSG90001" />
+            <property name="allowNullValue" value="false" />
+            <!-- トリムを設定する。 設定可能な値は "trimAll" "noTrim" のいずれか -->
+            <property name="trimPolicy" value="noTrim" />
+      </component>
+</component-configuration>

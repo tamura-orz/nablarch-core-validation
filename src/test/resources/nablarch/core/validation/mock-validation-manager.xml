@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component-configuration xmlns="http://tis.co.jp/nablarch/component-configuration"
+                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                         xsi:schemaLocation="http://tis.co.jp/nablarch/component-configuration ../../../../../../Nablarch/resources/component-configuration.xsd">
+
+    <import file="db-default.xml"/>
+
+    <component name="stringResourceHolder" class="nablarch.core.message.MockStringResourceHolder">
+    </component>
+
+    <component name="validationManager" class="nablarch.core.validation.MockValidationManager">
+        <property name="convertors">
+            <list>
+                <component class="nablarch.core.validation.convertor.StringConvertor">
+                    <property name="conversionFailedMessageId" value="MSG00001"/>
+                </component>
+                <component class="nablarch.core.validation.convertor.StringArrayConvertor">
+                </component>
+                <component class="nablarch.core.validation.convertor.LongConvertor">
+                    <property name="invalidDigitsIntegerMessageId" value="MSG00031"/>
+                    <property name="multiInputMessageId" value="MSG00001"/>
+                </component>
+                <component class="nablarch.core.validation.convertor.BigDecimalConvertor">
+                    <property name="invalidDigitsIntegerMessageId" value="MSG00031"/>
+                    <property name="invalidDigitsFractionMessageId" value="MSG00032"/>
+                    <property name="multiInputMessageId" value="MSG00001"/>
+                </component>
+            </list>
+        </property>
+        <property name="validators">
+            <list>
+                <component class="nablarch.core.validation.validator.RequiredValidator">
+                    <property name="messageId" value="MSG00011"/>
+                </component>
+                <component class="nablarch.core.validation.validator.NumberRangeValidator">
+                    <property name="maxMessageId" value="MSG00051"/>
+                    <property name="maxAndMinMessageId" value="MSG00052"/>
+                    <property name="minMessageId" value="MSG00053"/>
+                </component>
+                <component class="nablarch.core.validation.validator.LengthValidator">
+                    <property name="maxMessageId" value="MSG00021"/>
+                    <property name="maxAndMinMessageId" value="MSG00022"/>
+                    <property name="fixLengthMessageId" value="MSG00023"/>
+                </component>
+                <component class="nablarch.core.validation.validator.unicode.SystemCharValidator">
+                    <property name="messageId" value="MSG00094" />
+                </component>
+                <component class="nablarch.core.validation.validator.unicode.SystemCharValidator">
+                    <property name="messageId" value="MSG00094" />
+                </component>
+                <component class="nablarch.common.code.validator.CodeValueValidator">
+                    <property name="messageId" value="MSG00095" />
+                </component>
+                <component class="nablarch.core.validation.ErroneousValidator">
+                </component>
+            </list>
+        </property>
+        <property name="formDefinitionCache">
+            <component name="formDefinitionCache" class="nablarch.core.cache.BasicStaticDataCache">
+                <property name="loader">
+                    <component class="nablarch.core.validation.FormValidationDefinitionLoader"/>
+                </property>
+            </component>
+        </property>
+        <property name="invalidSizeKeyMessageId" value="MSG00081"/>
+        <property name="formArraySizeValueMaxLength" value="1"/>
+    </component>
+
+    <component name="char1" class="nablarch.core.validation.validator.unicode.LiteralCharsetDef">
+        <property name="allowedCharacters" value="12345" />
+        <property name="messageId" value="MSG00092" />
+    </component>
+    <component name="char2" class="nablarch.core.validation.validator.unicode.LiteralCharsetDef">
+        <property name="allowedCharacters" value="67890" />
+        <property name="messageId" value="MSG00093" />
+    </component>
+    <component name="char3" class="nablarch.core.validation.validator.unicode.RangedCharsetDef">
+        <property name="startCodePoint" value="U+0020" />
+        <property name="endCodePoint" value="U+0020" />
+  </component>
+  
+  <component name="codeManager" class="nablarch.common.code.MockCodeManager">
+  </component>
+  
+    <component name="initializer" class="nablarch.core.repository.initialization.BasicApplicationInitializer">
+        <property name="initializeList">
+            <list>
+                <component-ref name="validationManager"/>
+            </list>
+        </property>
+    </component>
+</component-configuration>
