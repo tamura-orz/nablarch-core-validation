@@ -1,12 +1,13 @@
 package nablarch.core.validation;
 
-import nablarch.core.message.Message;
-import nablarch.core.util.annotation.Published;
+import java.util.List;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.internal.matchers.TypeSafeMatcher;
+import org.hamcrest.TypeSafeMatcher;
 
-import java.util.List;
+import nablarch.core.message.Message;
+import nablarch.core.util.annotation.Published;
 
 /**
  * VAlidationContext用のMatcherクラス。

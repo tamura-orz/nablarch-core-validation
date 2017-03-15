@@ -1,7 +1,8 @@
 package nablarch.core.validation.domain.sample;
 
-import nablarch.common.code.validator.CodeValue;
-import nablarch.common.date.YYYYMMDD;
+import java.math.BigDecimal;
+import java.util.Map;
+
 import nablarch.core.validation.PropertyName;
 import nablarch.core.validation.ValidateFor;
 import nablarch.core.validation.ValidationContext;
@@ -11,9 +12,6 @@ import nablarch.core.validation.validator.Length;
 import nablarch.core.validation.validator.NumberRange;
 import nablarch.core.validation.validator.Required;
 import nablarch.core.validation.validator.unicode.SystemChar;
-
-import java.math.BigDecimal;
-import java.util.Map;
 
 /**
  * ドメインアノテーションを使用しないDTO。
@@ -94,7 +92,6 @@ public class UnusedDomainSampleDto implements TestDto {
     }
 
     @PropertyName("日付")
-    @YYYYMMDD(allowFormat="yyyy-MM-dd")
     public void setDate(String date) {
         this.date = date;
     }
@@ -104,7 +101,6 @@ public class UnusedDomainSampleDto implements TestDto {
     }
 
     @PropertyName("ステータス")
-    @CodeValue(codeId="0002", pattern="PATTERN1")
     public void setStatus(String status) {
         this.status = status;
     }
@@ -114,7 +110,6 @@ public class UnusedDomainSampleDto implements TestDto {
     }
 
     @PropertyName("ステータス")
-    @CodeValue(codeId="0002", pattern="PATTERN2")
     public void setStatus2(String status2) {
         this.status2 = status2;
     }

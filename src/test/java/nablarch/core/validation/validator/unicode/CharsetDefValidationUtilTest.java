@@ -1,15 +1,15 @@
 package nablarch.core.validation.validator.unicode;
 
-import nablarch.core.repository.SimpleLoader;
-import nablarch.test.NablarchTestUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static nablarch.core.validation.validator.unicode.CharsetDefValidationUtil.isValid;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 
-import static nablarch.core.validation.validator.unicode.CharsetDefValidationUtil.isValid;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import nablarch.core.repository.SimpleLoader;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * {@link CharsetDefValidationUtil}のテストクラス。
@@ -118,18 +118,9 @@ public class CharsetDefValidationUtilTest {
         assertThat(isValid(name, "\uD867\uDE3D", false, false), is(false));   // サロゲートペアを許容
     }
 
-    /** コンストラクタ呼び出しテスト（カバレッジ対策） */
-    @Test
-    public void testConstructor() {
-        NablarchTestUtils.invokePrivateDefaultConstructor(CharsetDefValidationUtil.class);
-
-    }
-
     private CharsetDef composite(CharsetDef... defs) {
         CompositeCharsetDef compo = new CompositeCharsetDef();
         compo.setCharsetDefList(Arrays.asList(defs));
         return compo;
     }
-
-
 }

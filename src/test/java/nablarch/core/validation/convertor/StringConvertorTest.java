@@ -1,33 +1,45 @@
 package nablarch.core.validation.convertor;
 
-import nablarch.common.date.YYYYMMDD;
-import nablarch.common.date.YYYYMMDDConvertor;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import nablarch.core.ThreadContext;
 import nablarch.core.message.MockStringResourceHolder;
 import nablarch.core.repository.SystemRepository;
 import nablarch.core.repository.di.ComponentDefinitionLoader;
 import nablarch.core.repository.di.DiContainer;
 import nablarch.core.repository.di.config.xml.XmlComponentDefinitionLoader;
+import nablarch.core.validation.ConversionFormat;
 import nablarch.core.validation.ValidationContext;
 import nablarch.core.validation.creator.ReflectionFormCreator;
 import nablarch.test.support.SystemRepositoryResource;
-import nablarch.test.support.tool.Hereis;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import java.io.File;
-import java.lang.annotation.Annotation;
-import java.util.*;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-
 /**
  * {@link StringConvertor}のテストクラス。
  */
-@SuppressWarnings({"UnusedLabel"})
+@SuppressWarnings("UnusedLabel")
 public class StringConvertorTest {
 
     private StringConvertor testee;
@@ -40,6 +52,7 @@ public class StringConvertorTest {
     private static final String[][] MESSAGES = {
             {"MSG00001", "ja", "{0}が正しくありません。", "en", "value of {0} is not valid."},
             {"PROP0001", "ja", "プロパティ1", "en", "property1"},
+            {"invalid.zero", "ja", "ゼロじゃありません1", "en", "invalid!!!"},
             {"MSG00002", "ja", "{0}がフォーマット通りではありません。", "en", "value if input is not well-formatted."}
     };
 
@@ -165,31 +178,21 @@ public class StringConvertorTest {
                     new ReflectionFormCreator(),
                     params, "");
             List<ExtendedStringConvertor> extendedStringConvertorList = new ArrayList<ExtendedStringConvertor>();
-            YYYYMMDDConvertor dateStringConvertor = new YYYYMMDDConvertor() ;
-            dateStringConvertor.setParseFailedMessageId("MSG00002");
-            extendedStringConvertorList.add(dateStringConvertor);
-
+            final ExtendedStringConvertor convertor = new ZeroConvertor();
+            extendedStringConvertorList.add(convertor);
             testee.setExtendedStringConvertors(extendedStringConvertorList);
-            YYYYMMDD dateStringAnnotation = new YYYYMMDD() {
-                public String allowFormat() {
-                    return "yyyy/MM/dd";
-                }
+            
+            Zero dateStringAnnotation = new Zero() {
+                @Override
                 public Class<? extends Annotation> annotationType() {
-                    return YYYYMMDD.class;
-                }
-                public String messageId() {
-                    return ""; // default
+                    return Zero.class;
                 }
             };
-            assertTrue(testee.isConvertible(context, "param", "日付文字列", "2011/09/09", dateStringAnnotation));
-            assertTrue(testee.isConvertible(context, "param", "日付文字列", "20110909", dateStringAnnotation));
-            assertTrue(testee.isConvertible(context, "param", "日付文字列", new String[]{"2011/09/09"}, dateStringAnnotation));
-            assertFalse(testee.isConvertible(context, "param", "日付文字列", new String[]{"201109090"}, dateStringAnnotation));
-            assertEquals("日付文字列がフォーマット通りではありません。", context.getMessages().get(0).formatMessage());
-            assertFalse(testee.isConvertible(context, "param", "日付文字列", new String[]{"2011/09/09a"}, dateStringAnnotation));
-            assertEquals("日付文字列がフォーマット通りではありません。", context.getMessages().get(1).formatMessage());
+            assertThat(testee.isConvertible(context, "param", "zero", "ゼロ", dateStringAnnotation), is(true));
+            assertThat(testee.isConvertible(context, "param", "zero", new String[] {"ゼロ"}, dateStringAnnotation), is(true));
+            assertThat(testee.isConvertible(context, "param", "zero", new String[] {"0"}, dateStringAnnotation), is(false));
+            assertThat(context.getMessages().get(0).getMessageId(), is("invalid.zero"));
         }
-
     }
 
     /**
@@ -309,50 +312,45 @@ public class StringConvertorTest {
 
         // ネストするコンバータを使用する場合。
         List<ExtendedStringConvertor> extendedStringConvertorList = new ArrayList<ExtendedStringConvertor>();
-        YYYYMMDDConvertor dateStringConvertor = new YYYYMMDDConvertor();
-        dateStringConvertor.setParseFailedMessageId("MSG00002");
-        extendedStringConvertorList.add(dateStringConvertor);
-
+        extendedStringConvertorList.add(new ZeroConvertor());
         testee.setExtendedStringConvertors(extendedStringConvertorList);
-        YYYYMMDD dateStringAnnotation = new YYYYMMDD() {
-            public String allowFormat() {
-
-                return "yyyy/MM/dd";
-            }
+        final Zero zero = new Zero() {
+            @Override
             public Class<? extends Annotation> annotationType() {
-
-                return YYYYMMDD.class;
-            }
-            public String messageId() {
-                return ""; // default
+                return Zero.class;
             }
         };
 
-        assertEquals("20110909", testee.convert(context, "param", "2011/09/09", dateStringAnnotation));
-        assertEquals("20110909", testee.convert(context, "param", new String[]{"2011/09/09"}, dateStringAnnotation));
+        assertEquals("0", testee.convert(context, "param", "ゼロ", zero));
+        assertEquals("0", testee.convert(context, "param", new String[]{"ゼロ"}, zero));
 
         try {
             Digits digits = new Digits() {
+                @Override
                 public int integer() {
 
                     return 0;
                 }
 
+                @Override
                 public int fraction() {
 
                     return 0;
                 }
 
+                @Override
                 public boolean commaSeparated() {
 
                     return false;
                 }
 
+                @Override
                 public String messageId() {
 
                     return null;
                 }
 
+                @Override
                 public Class<? extends Annotation> annotationType() {
 
                     return null;
@@ -414,43 +412,33 @@ public class StringConvertorTest {
 
         // ネストするコンバータを使用してトリム動作を確認
         List<ExtendedStringConvertor> extendedStringConvertorList = new ArrayList<ExtendedStringConvertor>();
-        YYYYMMDDConvertor dateStringConvertor = new YYYYMMDDConvertor();
-        dateStringConvertor.setParseFailedMessageId("MSG00002");
-        extendedStringConvertorList.add(dateStringConvertor);
-
+        extendedStringConvertorList.add(new ZeroConvertor());
         testee.setExtendedStringConvertors(extendedStringConvertorList);
-        YYYYMMDD dateStringAnnotation = new YYYYMMDD() {
-            public String allowFormat() {
-
-                return "yyyy/MM/dd";
-            }
+        final Zero zero = new Zero() {
+            @Override
             public Class<? extends Annotation> annotationType() {
-
-                return YYYYMMDD.class;
-            }
-            public String messageId() {
-                return ""; // default
+                return Zero.class;
             }
         };
 
         // デフォルト設定でu0020以下の文字（文字列前後の半角スペース、改行コード、タブ、null文字）がトリムされないことの確認
-        assertFalse(testee.isConvertible(context, "param", "表示", new String[]{"   \r\n\t\0 2010/10/13    \t\r\n\0"}, dateStringAnnotation));
-        assertFalse(testee.isConvertible(context, "param", "表示", "   \r\n\t\0 2010/10/13    \t\r\n\0", dateStringAnnotation));
+        assertFalse(testee.isConvertible(context, "param", "表示", new String[]{"   \r\n\t\0 ゼロ    \t\r\n\0"}, zero));
+        assertFalse(testee.isConvertible(context, "param", "表示", "   \r\n\t\0 ゼロ    \t\r\n\0", zero));
 
         // trimAllを設定した場合に、u0020以下の文字（半角スペース、改行コード、タブ、null文字など）がトリムされることの確認
         testee.setTrimPolicy("trimAll");
-        assertTrue(testee.isConvertible(context, "param", "表示", new String[]{"   \r\n\t\0 2010/10/13    \t\r\n\0"}, dateStringAnnotation));
-        assertTrue(testee.isConvertible(context, "param", "表示", "   \r\n\t\0 2010/10/13    \t\r\n\0", dateStringAnnotation));
+        assertTrue(testee.isConvertible(context, "param", "表示", new String[]{"   \r\n\t\0 ゼロ    \t\r\n\0"}, zero));
+        assertTrue(testee.isConvertible(context, "param", "表示", "   \r\n\t\0 ゼロ    \t\r\n\0", zero));
 
         // noTrimを設定した場合にu0020以下の文字（半角スペース、改行コード、タブ、null文字など）がトリムされないことの確認
         testee.setTrimPolicy("noTrim");
-        assertFalse(testee.isConvertible(context, "param", "表示", new String[]{"   \r\n\t\0 2010/10/13    \t\r\n\0"}, dateStringAnnotation));
-        assertFalse(testee.isConvertible(context, "param", "表示", "   \r\n\t\0 2010/10/13    \t\r\n\0", dateStringAnnotation));
+        assertFalse(testee.isConvertible(context, "param", "表示", new String[]{"   \r\n\t\0 ゼロ    \t\r\n\0"}, zero));
+        assertFalse(testee.isConvertible(context, "param", "表示", "   \r\n\t\0 ゼロ    \t\r\n\0", zero));
 
         // trimAllを設定した場合でも、全角スペースはトリムされないことの確認
         testee.setTrimPolicy("trimAll");
-        assertFalse(testee.isConvertible(context, "param", "表示", new String[]{"　　　2010/10/13　　　"}, dateStringAnnotation));
-        assertFalse(testee.isConvertible(context, "param", "表示", "　　　2010/10/13　　　", dateStringAnnotation));
+        assertFalse(testee.isConvertible(context, "param", "表示", new String[]{"　　　ゼロ　　　"}, zero));
+        assertFalse(testee.isConvertible(context, "param", "表示", "　　　ゼロ　　　", zero));
     }
     
     
@@ -568,6 +556,43 @@ public class StringConvertorTest {
         assertEquals("String配列OK", "日本語", configurationConvertor.convert(context, "param", new String[]{"   \r\n\t\0日本語    \t\r\n\0"}, null));
         assertEquals("StringOK", "文字列", configurationConvertor.convert(context, "param", "   \r\n\t\0文字列    \t\r\n\0", null));
     }
+
+    private static class ZeroConvertor implements ExtendedStringConvertor {
+
+        @Override
+        public Class<? extends Annotation> getTargetAnnotation() {
+            return Zero.class;
+        }
+
+        @Override
+        public Class<?> getTargetClass() {
+            return String.class;
+        }
+
+        @Override
+        public <T> boolean isConvertible(final ValidationContext<T> context, final String propertyName,
+                final Object propertyDisplayName,
+                final Object value, final Annotation format) {
+
+            final boolean result = value != null && value.toString()
+                                                     .equals("ゼロ");
+            if (!result) {
+                context.addResultMessage(propertyName, "invalid.zero");
+            }
+            return result;
+        }
+
+        @Override
+        public <T> Object convert(final ValidationContext<T> context, final String propertyName,
+                final Object value, final Annotation format) {
+            return "0";
+        }
+    }
     
-    
+    @ConversionFormat
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    @interface Zero {
+
+    }
 }

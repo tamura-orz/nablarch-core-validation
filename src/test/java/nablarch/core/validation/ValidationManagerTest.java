@@ -1,27 +1,37 @@
 package nablarch.core.validation;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.lang.annotation.Annotation;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import nablarch.core.ThreadContext;
 import nablarch.core.cache.BasicStaticDataCache;
 import nablarch.core.message.Message;
 import nablarch.core.message.MessageNotFoundException;
 import nablarch.core.message.MockStringResourceHolder;
-import nablarch.core.message.StringResource;
 import nablarch.core.validation.convertor.Digits;
 import nablarch.core.validation.validator.Length;
 import nablarch.core.validation.validator.NumberRange;
 import nablarch.core.validation.validator.Required;
 import nablarch.test.support.SystemRepositoryResource;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-
-import java.lang.annotation.Annotation;
-import java.math.BigDecimal;
-import java.util.*;
-
-import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 /**
  * {@link ValidationManager}のテストクラス。
@@ -67,8 +77,6 @@ public class ValidationManagerTest {
         Map<String, String[]> params = new HashMap<String, String[]>();
         params.put("param", new String[]{"200"});
 
-        BasicStaticDataCache<StringResource> msgCache = repositoryResource.getComponent("stringResourceCache");
-        msgCache.initialize();
         BasicStaticDataCache cache = repositoryResource.getComponent("validationManager.formDefinitionCache");
         cache.initialize();
         manager =  repositoryResource.getComponent("validationManager");
@@ -83,8 +91,6 @@ public class ValidationManagerTest {
         Map<String, String[]> params = new HashMap<String, String[]>();
         params.put("param", new String[]{"10"});
 
-        BasicStaticDataCache<StringResource> msgCache = repositoryResource.getComponent("stringResourceCache");
-        msgCache.initialize();
         BasicStaticDataCache cache = repositoryResource.getComponent("validationManager2.formDefinitionCache");
         cache.initialize();
         manager =  repositoryResource.getComponent("validationManager2");

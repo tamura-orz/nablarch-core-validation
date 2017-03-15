@@ -30,29 +30,20 @@ configurations {
 
 apply plugin: 'cobertura'
 
+configurations {
+  all*.exclude module: 'eclipselink'
+  all*.exclude module: 'commons-dbcp'
+}
+
 dependencies {
 
   compile "com.nablarch.framework:nablarch-core:${nablarchCoreVersion}"
   compile "com.nablarch.framework:nablarch-core-message:${nablarchCoreMessageVersion}"
 
-  testCompile 'com.nablarch.framework:nablarch-core-jdbc:1.1.2'
-  testCompile 'com.nablarch.framework:nablarch-core-repository:1.0.1'
-  testCompile 'com.nablarch.framework:nablarch-common-code:1.2.1'
-  testCompile 'com.nablarch.framework:nablarch-common-date:1.0.1'
+  testCompile "com.nablarch.framework:nablarch-core-repository:${nablarchCoreRepositoryVersion}"
+  testCompile "com.nablarch.framework:nablarch-core-jdbc:${nablarchCoreJdbcVersion}"
 
   testCompile 'junit:junit:4.12'
-  testCompile 'com.nablarch.dev:nablarch-test-support:0.0.5'
-  testCompile 'com.nablarch.framework:nablarch-testing:1.0.6'
-  testCompile(group: 'com.nablarch.tool', name: 'nablarch-toolbox', version: '1.0.2') {
-    exclude group: 'com.nablarch.profile', module: 'nablarch-all-in-one'
-    exclude group: 'com.nablarch.framework', module: 'nablarch-testing'
-  }
-  testCompile 'com.oracle:ucp:11.2.0.3.0'
-  testCompile 'com.oracle:ojdbc6:11.2.0.2.0'
-
-  testRuntime 'com.nablarch.framework:nablarch-common-code-jdbc:1.0.1'
-  testRuntime 'com.nablarch.framework:nablarch-common-jdbc:1.1.1'
-  testRuntime files('${projectDir}/src/test/java/')
 
   // Cobertura
   testCompile "net.saliman:gradle-cobertura-plugin:${coberturaPluginVersion}"
@@ -79,22 +70,6 @@ test {
   )
 
   ignoreFailures = true
-
-  doFirst {
-    // masterから本テストを実行するとmaster配下にlogディレクトリが作成されてしまったので、プロジェクト名を明記
-    def logDir = new File("${projectDir}/src/test/log")
-    if (!logDir.exists()) {
-      assert logDir.mkdirs()
-    }
-  }
-
-  exclude '**/*TestBase.class',
-          '**/*SqlServer*',
-          '**/*Db2*',
-          // testが止まってしまうので、一旦excludeします。
-          '**/*MessagingSampleTest*'
-
-  //include 'nablarch/core/util/*Test.class'
 
   beforeTest { descriptor ->
     logger.lifecycle("Running test: " + descriptor)

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import nablarch.common.code.validator.CodeValue;
 import nablarch.core.validation.PropertyName;
 import nablarch.core.validation.ValidateFor;
 import nablarch.core.validation.ValidationContext;
@@ -123,7 +122,6 @@ public class SampleForm implements TestForm {
 
     @PropertyName("ステータス")
     @Domain(DomainType.STATUS)
-    @CodeValue(codeId="0002", pattern="PATTERN2")
     public void setStatus2(String status2) {
         this.status2 = status2;
     }
@@ -210,7 +208,7 @@ public class SampleForm implements TestForm {
     public static void validateForDirectCallable(ValidationContext<SampleForm> context) {
         ValidationUtil.validate(context, new String[] {"freeText"});
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("value", DomainType.STATUS);
+        params.put("value", DomainType.REQUIRED);
         ValidationUtil.validate(context, "freeText", Domain.class, params);
     }
 }

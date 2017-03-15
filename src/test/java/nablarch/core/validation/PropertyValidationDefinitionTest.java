@@ -1,19 +1,20 @@
 package nablarch.core.validation;
 
-import nablarch.core.validation.convertor.Digits;
-import nablarch.core.validation.convertor.RegexFormat;
-import nablarch.core.validation.validator.Length;
-import nablarch.core.validation.validator.NumberRange;
-import nablarch.core.validation.validator.Required;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import nablarch.core.validation.convertor.Digits;
+import nablarch.core.validation.convertor.RegexFormat;
+import nablarch.core.validation.validator.Length;
+import nablarch.core.validation.validator.NumberRange;
+import nablarch.core.validation.validator.Required;
+
+import org.junit.Test;
 
 
 public class PropertyValidationDefinitionTest {
@@ -22,7 +23,8 @@ public class PropertyValidationDefinitionTest {
     public void testConstructorWithPropertyName() throws Throwable {
         PropertyValidationDefinition def = new PropertyValidationDefinition(TestEntity.class, TestEntity.class.getMethod("setProp1", Long.class), null);
         
-        assertEquals(3, def.getValidatorAnnotations().size());
+        assertThat(def.getValidatorAnnotations()
+                             .size(), is(3));
         
         String messageId = def.getMessageId();
         RegexFormat format = (RegexFormat) def.getConvertorFormatAnnotation();
@@ -30,12 +32,12 @@ public class PropertyValidationDefinitionTest {
         Length length = (Length) def.getValidatorAnnotations().get(1);
         NumberRange range = (NumberRange) def.getValidatorAnnotations().get(2);
 
-        assertEquals("message02", messageId);
-        assertTrue(required != null);
-        assertEquals(10, length.max());
-        assertEquals("test", format.value());
-        assertEquals(0.0, range.min());
-        assertEquals(10.0, range.max());
+        assertThat(messageId, is("message02"));
+        assertThat(required, not(sameInstance(null)));
+        assertThat(length.max(), is(10));
+        assertThat(format.value(), is("test"));
+        assertThat(range.min(), is(0.0));
+        assertThat(range.max(), is(10.0));
         
     }
 
@@ -45,7 +47,8 @@ public class PropertyValidationDefinitionTest {
         { 
             PropertyValidationDefinition def = new PropertyValidationDefinition(TestEntity.class, TestEntity.class.getMethod("setProp2", Long.class), null);
             
-            assertEquals(3, def.getValidatorAnnotations().size());
+            assertThat(def.getValidatorAnnotations()
+                                 .size(), is(3));
             
             String messageId = def.getMessageId();
             RegexFormat format = (RegexFormat) def.getConvertorFormatAnnotation();
@@ -53,12 +56,12 @@ public class PropertyValidationDefinitionTest {
             Length length = (Length) def.getValidatorAnnotations().get(1);
             NumberRange range = (NumberRange) def.getValidatorAnnotations().get(2);
     
-            assertNull(messageId);
-            assertTrue(required != null);
-            assertEquals(10, length.max());
-            assertEquals("test", format.value());
-            assertEquals(0.0, range.min());
-            assertEquals(10.0, range.max());
+            assertThat(messageId, nullValue());
+            assertThat(required, not(sameInstance(null)));
+            assertThat(length.max(), is(10));
+            assertThat(format.value(), is("test"));
+            assertThat(range.min(), is(0.0));
+            assertThat(range.max(), is(10.0));
         }        
         
 
@@ -68,15 +71,15 @@ public class PropertyValidationDefinitionTest {
 
             List<Annotation> validatorAnnotations = def.getValidatorAnnotations();
             
-            assertEquals(1, validatorAnnotations.size());
+            assertThat(validatorAnnotations.size(), is(1));
             NumberRange numberRange = (NumberRange) validatorAnnotations.get(0);
             Digits digits = (Digits) def.getConvertorFormatAnnotation();
             
             assertEquals(-10.0d, numberRange.min(), 0.01d);
             assertEquals(200.0d, numberRange.max(), 0.01d);
             
-            assertEquals(1, digits.integer());
-            assertEquals(1, digits.fraction());
+            assertThat(digits.integer(), is(1));
+            assertThat(digits.fraction(), is(1));
         }
         
 
@@ -87,15 +90,15 @@ public class PropertyValidationDefinitionTest {
             
             List<Annotation> validatorAnnotations = def.getValidatorAnnotations();
             
-            assertEquals(1, validatorAnnotations.size());
+            assertThat(validatorAnnotations.size(), is(1));
             NumberRange numberRange = (NumberRange) validatorAnnotations.get(0);
             Digits digits = (Digits) def.getConvertorFormatAnnotation();
             
             assertEquals(-20.0d, numberRange.min(), 0.01d);
             assertEquals(10.0d, numberRange.max(), 0.01d);
             
-            assertEquals(2, digits.integer());
-            assertEquals(2, digits.fraction());
+            assertThat(digits.integer(), is(2));
+            assertThat(digits.fraction(), is(2));
         }
 
         { 
@@ -103,32 +106,30 @@ public class PropertyValidationDefinitionTest {
             PropertyValidationDefinition def = new PropertyValidationDefinition(TestEntity2.class, TestEntity2.class.getMethod("setOverrideBd2", BigDecimal.class), parentDef);
             List<Annotation> validatorAnnotations = def.getValidatorAnnotations();
             
-            assertEquals(1, validatorAnnotations.size());
+            assertThat(validatorAnnotations.size(), is(1));
             NumberRange numberRange = (NumberRange) validatorAnnotations.get(0);
             Digits digits = (Digits) def.getConvertorFormatAnnotation();
             
             assertEquals(-30.0d, numberRange.min(), 0.01d);
             assertEquals(20.0d, numberRange.max(), 0.01d);
             
-            assertEquals(4, digits.integer());
-            assertEquals(4, digits.fraction());
+            assertThat(digits.integer(), is(4));
+            assertThat(digits.fraction(), is(4));
         }
 
-        {
-            // 親定義が渡されない場合も一応テスト。
-            PropertyValidationDefinition def = new PropertyValidationDefinition(TestEntity2.class, TestEntity2.class.getMethod("setOverrideBd2", BigDecimal.class), null);
-            List<Annotation> validatorAnnotations = def.getValidatorAnnotations();
-            
-            assertEquals(1, validatorAnnotations.size());
-            NumberRange numberRange = (NumberRange) validatorAnnotations.get(0);
-            Digits digits = (Digits) def.getConvertorFormatAnnotation();
-            
-            assertEquals(-30.0d, numberRange.min(), 0.01d);
-            assertEquals(20.0d, numberRange.max(), 0.01d);
-            
-            assertEquals(4, digits.integer());
-            assertEquals(4, digits.fraction());
-        }
+        // 親定義が渡されない場合も一応テスト。
+        PropertyValidationDefinition def = new PropertyValidationDefinition(TestEntity2.class, TestEntity2.class.getMethod("setOverrideBd2", BigDecimal.class), null);
+        List<Annotation> validatorAnnotations = def.getValidatorAnnotations();
+
+        assertThat(validatorAnnotations.size(), is(1));
+        NumberRange numberRange = (NumberRange) validatorAnnotations.get(0);
+        Digits digits = (Digits) def.getConvertorFormatAnnotation();
+
+        assertEquals(-30.0d, numberRange.min(), 0.01d);
+        assertEquals(20.0d, numberRange.max(), 0.01d);
+
+        assertThat(digits.integer(), is(4));
+        assertThat(digits.fraction(), is(4));
     }
 
     public static class TestEntity {
