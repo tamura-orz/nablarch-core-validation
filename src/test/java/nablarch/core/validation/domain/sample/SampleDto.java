@@ -1,14 +1,13 @@
 package nablarch.core.validation.domain.sample;
 
-import nablarch.common.code.validator.CodeValue;
+import java.math.BigDecimal;
+import java.util.Map;
+
 import nablarch.core.validation.PropertyName;
 import nablarch.core.validation.ValidateFor;
 import nablarch.core.validation.ValidationContext;
 import nablarch.core.validation.ValidationUtil;
 import nablarch.core.validation.validator.Required;
-
-import java.math.BigDecimal;
-import java.util.Map;
 
 public class SampleDto implements TestDto {
 
@@ -106,7 +105,6 @@ public class SampleDto implements TestDto {
 
     @PropertyName("ステータス")
     @Domain(DomainType.STATUS)
-    @CodeValue(codeId="0002", pattern="PATTERN2")
     public void setStatus2(String status2) {
         this.status2 = status2;
     }

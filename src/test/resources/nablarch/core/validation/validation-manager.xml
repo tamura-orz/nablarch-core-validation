@@ -6,23 +6,6 @@
     <component name="stringResourceHolder" class="nablarch.core.message.MockStringResourceHolder">
     </component>
 
-    <component name="stringResourceCache" class="nablarch.core.cache.BasicStaticDataCache">
-        <property name="loader">
-            <component class="nablarch.core.message.BasicStringResourceLoader">
-                <!-- メッセージリソーステーブル名 -->
-                <property name="tableName" value="TEST_MESSAGE"/>
-                <!-- メッセージリソーステーブル IDカラム名 -->
-                <property name="idColumnName" value="MESSAGE_ID"/>
-                <!-- メッセージリソーステーブル 言語カラム名 -->
-                <property name="langColumnName" value="LANG"/>
-                <!-- メッセージリソーステーブル メッセージカラム名 -->
-                <property name="valueColumnName" value="MESSAGE"/>
-            </component>
-        </property>
-        <!-- 初期ロード -->
-        <property name="loadOnStartup" value="false"/>
-    </component>
-
     <component name="validationManager" class="nablarch.core.validation.ValidationManager">
         <property name="convertors">
             <list>

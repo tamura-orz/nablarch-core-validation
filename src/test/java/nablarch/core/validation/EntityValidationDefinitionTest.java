@@ -1,18 +1,21 @@
 package nablarch.core.validation;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.lang.reflect.Method;
+import java.util.List;
+
 import nablarch.core.validation.ValidationUtilTest.User;
 import nablarch.core.validation.convertor.RegexFormat;
 import nablarch.core.validation.validator.Length;
 import nablarch.core.validation.validator.NumberRange;
 import nablarch.core.validation.validator.Required;
+
 import org.junit.Test;
-
-import java.lang.reflect.Method;
-import java.util.List;
-
-import static junit.framework.Assert.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 
 public class EntityValidationDefinitionTest {
@@ -39,8 +42,8 @@ public class EntityValidationDefinitionTest {
         assertTrue(required1 != null);
         assertEquals(10, length1.max());
         assertEquals("test", format.value());
-        assertEquals(0.0, range.min());
-        assertEquals(10.0, range.max());
+        assertThat(range.min(), is(0.0));
+        assertThat(range.max(), is(10.0));
 
         assertEquals("message02", messageId2);
         assertTrue(required2 != null);

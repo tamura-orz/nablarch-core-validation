@@ -3,8 +3,6 @@
                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                          xsi:schemaLocation="http://tis.co.jp/nablarch/component-configuration ../../../../../../Nablarch/resources/component-configuration.xsd">
 
-    <import file="db-default.xml"/>
-
     <component name="stringResourceHolder" class="nablarch.core.message.MockStringResourceHolder">
     </component>
 
@@ -48,9 +46,6 @@
                 <component class="nablarch.core.validation.validator.unicode.SystemCharValidator">
                     <property name="messageId" value="MSG00094" />
                 </component>
-                <component class="nablarch.common.code.validator.CodeValueValidator">
-                    <property name="messageId" value="MSG00095" />
-                </component>
                 <component class="nablarch.core.validation.ErroneousValidator">
                 </component>
             </list>
@@ -77,9 +72,6 @@
     <component name="char3" class="nablarch.core.validation.validator.unicode.RangedCharsetDef">
         <property name="startCodePoint" value="U+0020" />
         <property name="endCodePoint" value="U+0020" />
-  </component>
-  
-  <component name="codeManager" class="nablarch.common.code.MockCodeManager">
   </component>
   
     <component name="initializer" class="nablarch.core.repository.initialization.BasicApplicationInitializer">

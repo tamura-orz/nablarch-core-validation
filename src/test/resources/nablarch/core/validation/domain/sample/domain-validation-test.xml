@@ -6,8 +6,6 @@
   <component name="initializer" class="nablarch.core.repository.initialization.BasicApplicationInitializer">
     <property name="initializeList">
       <list>
-        <component-ref name="codeLoader" />
-        <component-ref name="codeCache" />
         <component-ref name="formDefinitionCache" />
         <component-ref name="validationManager" />
         <component-ref name="domainValidator" />
@@ -16,39 +14,6 @@
   </component>
 
   <component name="statementFactory" class="nablarch.core.db.statement.BasicStatementFactory" autowireType="None" />
-
-  <component name="codeLoader" class="nablarch.common.code.BasicCodeLoader">
-    <property name="codePatternSchema">
-      <component class="nablarch.common.code.schema.CodePatternSchema">
-        <property name="tableName" value="CODE_PATTERN" />
-        <property name="idColumnName" value="ID" />
-        <property name="valueColumnName" value="VALUE" />
-        <property name="patternColumnNames" value="PATTERN1,PATTERN2,PATTERN3" />
-      </component>
-    </property>
-    <property name="codeNameSchema">
-      <component class="nablarch.common.code.schema.CodeNameSchema">
-        <property name="tableName" value="CODE_NAME" />
-        <property name="idColumnName" value="ID" />
-        <property name="valueColumnName" value="VALUE" />
-        <property name="langColumnName" value="LANG" />
-        <property name="sortOrderColumnName" value="SORT_ORDER" />
-        <property name="nameColumnName" value="NAME" />
-        <property name="shortNameColumnName" value="SHORT_NAME" />
-        <property name="optionNameColumnNames" value="NAME_WITH_VALUE,OPTION01" />
-      </component>
-    </property>
-  </component>
-
-  <component name="codeCache" class="nablarch.core.cache.BasicStaticDataCache" >
-    <property name="loader" ref="codeLoader" />
-    <property name="loadOnStartup" value="false" />
-  </component>
-
-  <component name="codeManager" class="nablarch.common.code.MockCodeManager" autowireType="None">
-    <property name="codeDefinitionCache" ref="codeCache" />
-  </component>
-
   <component name="stringResourceHolder" class="nablarch.core.message.MockStringResourceHolder" />
 
   <component name="formDefinitionCache" class="nablarch.core.cache.BasicStaticDataCache">
@@ -77,7 +42,6 @@
         <component-ref name="requiredValidator" />
         <component-ref name="numberRangeValidator" />
         <component-ref name="lengthValidator" />
-        <component-ref name="codeValueValidator" />
         <component-ref name="systemCharValidator" />
         <component-ref name="domainValidator" />
       </list>
@@ -91,13 +55,6 @@
   <component name="stringConvertor" class="nablarch.core.validation.convertor.StringConvertor">
     <property name="conversionFailedMessageId" value="M001" />
     <property name="allowNullValue" value="false" />
-    <property name="extendedStringConvertors">
-      <list>
-        <component class="nablarch.common.date.YYYYMMDDConvertor">
-          <property name="parseFailedMessageId" value="M002" />
-        </component>
-      </list>
-    </property>
   </component>
 
   <component name="stringArrayConvertor" class="nablarch.core.validation.convertor.StringArrayConvertor" />
@@ -146,10 +103,6 @@
     <property name="fixLengthMessageId" value="M013" />
   </component>
 
-  <component name="codeValueValidator" class="nablarch.common.code.validator.CodeValueValidator">
-    <property name="messageId" value="M014" />
-  </component>
-
   <component name="systemCharValidator" class="nablarch.core.validation.validator.unicode.SystemCharValidator">
     <property name="messageId" value="M015" />
     <property name="defaultCharsetDef">
@@ -165,7 +118,6 @@
         <component-ref name="requiredValidator" />
         <component-ref name="numberRangeValidator" />
         <component-ref name="lengthValidator" />
-        <component-ref name="codeValueValidator" />
         <component-ref name="systemCharValidator" />
       </list>
     </property>
@@ -178,7 +130,6 @@
         <component-ref name="requiredValidator" />
         <component-ref name="numberRangeValidator" />
         <component-ref name="lengthValidator" />
-        <component-ref name="codeValueValidator" />
         <component-ref name="systemCharValidator" />
       </list>
     </property>

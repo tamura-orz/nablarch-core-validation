@@ -1,13 +1,13 @@
 package nablarch.core.validation;
 
-import nablarch.core.message.StringResource;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
 
 import java.util.Locale;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
+import nablarch.core.message.StringResource;
+
+import org.junit.Test;
 
 /**
  * {@link ValidationResultMessage}のテスト。

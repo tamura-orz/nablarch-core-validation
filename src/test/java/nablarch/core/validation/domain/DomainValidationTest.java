@@ -1,26 +1,37 @@
 package nablarch.core.validation.domain;
 
-import nablarch.common.code.MockCodeManager;
-import nablarch.core.cache.BasicStaticDataCache;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import nablarch.core.message.Message;
 import nablarch.core.message.MockStringResourceHolder;
 import nablarch.core.repository.SystemRepository;
 import nablarch.core.util.StringUtil;
-import nablarch.core.validation.*;
+import nablarch.core.validation.ValidationContext;
+import nablarch.core.validation.ValidationManager;
+import nablarch.core.validation.ValidationResultMessage;
+import nablarch.core.validation.ValidationUtil;
+import nablarch.core.validation.Validator;
 import nablarch.core.validation.domain.sample.DirectCallableDomainValidator;
 import nablarch.core.validation.domain.sample.SampleForm;
 import nablarch.core.validation.domain.sample.TestForm;
 import nablarch.core.validation.domain.sample.UnusedDomainSampleForm;
 import nablarch.test.support.SystemRepositoryResource;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.util.*;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
 
 /**
  * ドメイン名を指定したバリデーションに関連するクラスを結合したテスト。
@@ -57,12 +68,6 @@ public class DomainValidationTest {
      */
     @Before
     public void setUpRepository() {
-        repositoryResource.getComponentByType(MockCodeManager.class).setCodeNames(CODE_NAMES);
-        repositoryResource.getComponentByType(MockCodeManager.class).setCodePatterns(CODE_PATTERNS);
-
-        BasicStaticDataCache cache =
-                (BasicStaticDataCache) repositoryResource.getComponent("codeCache");
-        cache.initialize();
         ValidationManager manager = repositoryResource.getComponent("validationManager");
         manager.initialize();
     }
@@ -465,7 +470,7 @@ public class DomainValidationTest {
         assertThat(form.getUserIds()[1], is("b123456789"));
         assertThat(form.getUserIds()[2], is("c123456789"));
         assertThat(form.getName(), is("abcdefghijabcdefghijabcdefghijabcdefghij"));
-        assertThat(form.getDate(), is("20141231"));
+        assertThat(form.getDate(), is("2014-12-31"));
         assertThat(form.getStatus(), is("05"));
         assertThat(form.getStatus2(), is("04"));
         assertTrue(form.getRegistered());
@@ -479,7 +484,7 @@ public class DomainValidationTest {
         assertThat(form.getSampleDto().getUserIds()[1], is("b123456789"));
         assertThat(form.getSampleDto().getUserIds()[2], is("c123456789"));
         assertThat(form.getSampleDto().getName(), is("abcdefghijabcdefghijabcdefghijabcdefghij"));
-        assertThat(form.getSampleDto().getDate(), is("20141231"));
+        assertThat(form.getSampleDto().getDate(), is("2014-12-31"));
         assertThat(form.getSampleDto().getStatus(), is("05"));
         assertThat(form.getSampleDto().getStatus2(), is("04"));
         assertTrue(form.getSampleDto().getRegistered());
@@ -493,7 +498,7 @@ public class DomainValidationTest {
         assertThat(form.getFixedLengthSampleDtos()[0].getUserIds()[1], is("b123456789"));
         assertThat(form.getFixedLengthSampleDtos()[0].getUserIds()[2], is("c123456789"));
         assertThat(form.getFixedLengthSampleDtos()[0].getName(), is("abcdefghijabcdefghijabcdefghijabcdefghij"));
-        assertThat(form.getFixedLengthSampleDtos()[0].getDate(), is("20141231"));
+        assertThat(form.getFixedLengthSampleDtos()[0].getDate(), is("2014-12-31"));
         assertThat(form.getFixedLengthSampleDtos()[0].getStatus(), is("05"));
         assertThat(form.getFixedLengthSampleDtos()[0].getStatus2(), is("04"));
         assertTrue(form.getFixedLengthSampleDtos()[0].getRegistered());
@@ -507,7 +512,7 @@ public class DomainValidationTest {
         assertThat(form.getFixedLengthSampleDtos()[1].getUserIds()[1], is("b123456789"));
         assertThat(form.getFixedLengthSampleDtos()[1].getUserIds()[2], is("c123456789"));
         assertThat(form.getFixedLengthSampleDtos()[1].getName(), is("abcdefghijabcdefghijabcdefghijabcdefghij"));
-        assertThat(form.getFixedLengthSampleDtos()[1].getDate(), is("20141231"));
+        assertThat(form.getFixedLengthSampleDtos()[1].getDate(), is("2014-12-31"));
         assertThat(form.getFixedLengthSampleDtos()[1].getStatus(), is("05"));
         assertThat(form.getFixedLengthSampleDtos()[1].getStatus2(), is("04"));
         assertTrue(form.getFixedLengthSampleDtos()[1].getRegistered());
@@ -521,7 +526,7 @@ public class DomainValidationTest {
         assertThat(form.getVariableLengthSampleDtos()[0].getUserIds()[1], is("b123456789"));
         assertThat(form.getVariableLengthSampleDtos()[0].getUserIds()[2], is("c123456789"));
         assertThat(form.getVariableLengthSampleDtos()[0].getName(), is("abcdefghijabcdefghijabcdefghijabcdefghij"));
-        assertThat(form.getVariableLengthSampleDtos()[0].getDate(), is("20141231"));
+        assertThat(form.getVariableLengthSampleDtos()[0].getDate(), is("2014-12-31"));
         assertThat(form.getVariableLengthSampleDtos()[0].getStatus(), is("05"));
         assertThat(form.getVariableLengthSampleDtos()[0].getStatus2(), is("04"));
         assertTrue(form.getVariableLengthSampleDtos()[0].getRegistered());
@@ -535,7 +540,7 @@ public class DomainValidationTest {
         assertThat(form.getVariableLengthSampleDtos()[1].getUserIds()[1], is("b123456789"));
         assertThat(form.getVariableLengthSampleDtos()[1].getUserIds()[2], is("c123456789"));
         assertThat(form.getVariableLengthSampleDtos()[1].getName(), is("abcdefghijabcdefghijabcdefghijabcdefghij"));
-        assertThat(form.getVariableLengthSampleDtos()[1].getDate(), is("20141231"));
+        assertThat(form.getVariableLengthSampleDtos()[1].getDate(), is("2014-12-31"));
         assertThat(form.getVariableLengthSampleDtos()[1].getStatus(), is("05"));
         assertThat(form.getVariableLengthSampleDtos()[1].getStatus2(), is("04"));
         assertTrue(form.getVariableLengthSampleDtos()[1].getRegistered());
@@ -549,7 +554,7 @@ public class DomainValidationTest {
         assertThat(form.getVariableLengthSampleDtos()[2].getUserIds()[1], is("b123456789"));
         assertThat(form.getVariableLengthSampleDtos()[2].getUserIds()[2], is("c123456789"));
         assertThat(form.getVariableLengthSampleDtos()[2].getName(), is("abcdefghijabcdefghijabcdefghijabcdefghij"));
-        assertThat(form.getVariableLengthSampleDtos()[2].getDate(), is("20141231"));
+        assertThat(form.getVariableLengthSampleDtos()[2].getDate(), is("2014-12-31"));
         assertThat(form.getVariableLengthSampleDtos()[2].getStatus(), is("05"));
         assertThat(form.getVariableLengthSampleDtos()[2].getStatus2(), is("04"));
         assertTrue(form.getVariableLengthSampleDtos()[2].getRegistered());
@@ -657,9 +662,6 @@ public class DomainValidationTest {
         assertMessages(context.getMessages(),"sample.userId", "M013",
                                              "sample.userIds", "M013",
                                              "sample.name", "M015",
-                                             "sample.date", "M002",
-                                             "sample.status", "M014",
-                                             "sample.status2", "M014",
                                              "sample.registered", "M006",
                                              "sample.estimate", "M004",
                                              "sample.score", "M009",
@@ -667,9 +669,6 @@ public class DomainValidationTest {
                                              "sample.sampleDto.userId", "M013",
                                              "sample.sampleDto.userIds", "M013",
                                              "sample.sampleDto.name", "M015",
-                                             "sample.sampleDto.date", "M002",
-                                             "sample.sampleDto.status", "M014",
-                                             "sample.sampleDto.status2", "M014",
                                              "sample.sampleDto.registered", "M006",
                                              "sample.sampleDto.estimate", "M004",
                                              "sample.sampleDto.score", "M009",
@@ -677,9 +676,6 @@ public class DomainValidationTest {
                                              "sample.fixedLengthSampleDtos[0].userId", "M013",
                                              "sample.fixedLengthSampleDtos[0].userIds", "M013",
                                              "sample.fixedLengthSampleDtos[0].name", "M015",
-                                             "sample.fixedLengthSampleDtos[0].date", "M002",
-                                             "sample.fixedLengthSampleDtos[0].status", "M014",
-                                             "sample.fixedLengthSampleDtos[0].status2", "M014",
                                              "sample.fixedLengthSampleDtos[0].registered", "M006",
                                              "sample.fixedLengthSampleDtos[0].estimate", "M004",
                                              "sample.fixedLengthSampleDtos[0].score", "M009",
@@ -687,9 +683,6 @@ public class DomainValidationTest {
                                              "sample.fixedLengthSampleDtos[1].userId", "M013",
                                              "sample.fixedLengthSampleDtos[1].userIds", "M013",
                                              "sample.fixedLengthSampleDtos[1].name", "M015",
-                                             "sample.fixedLengthSampleDtos[1].date", "M002",
-                                             "sample.fixedLengthSampleDtos[1].status", "M014",
-                                             "sample.fixedLengthSampleDtos[1].status2", "M014",
                                              "sample.fixedLengthSampleDtos[1].registered", "M006",
                                              "sample.fixedLengthSampleDtos[1].estimate", "M004",
                                              "sample.fixedLengthSampleDtos[1].score", "M009",
@@ -697,9 +690,6 @@ public class DomainValidationTest {
                                              "sample.variableLengthSampleDtos[0].userId", "M013",
                                              "sample.variableLengthSampleDtos[0].userIds", "M013",
                                              "sample.variableLengthSampleDtos[0].name", "M015",
-                                             "sample.variableLengthSampleDtos[0].date", "M002",
-                                             "sample.variableLengthSampleDtos[0].status", "M014",
-                                             "sample.variableLengthSampleDtos[0].status2", "M014",
                                              "sample.variableLengthSampleDtos[0].registered", "M006",
                                              "sample.variableLengthSampleDtos[0].estimate", "M004",
                                              "sample.variableLengthSampleDtos[0].score", "M009",
@@ -707,9 +697,6 @@ public class DomainValidationTest {
                                              "sample.variableLengthSampleDtos[1].userId", "M013",
                                              "sample.variableLengthSampleDtos[1].userIds", "M013",
                                              "sample.variableLengthSampleDtos[1].name", "M015",
-                                             "sample.variableLengthSampleDtos[1].date", "M002",
-                                             "sample.variableLengthSampleDtos[1].status", "M014",
-                                             "sample.variableLengthSampleDtos[1].status2", "M014",
                                              "sample.variableLengthSampleDtos[1].registered", "M006",
                                              "sample.variableLengthSampleDtos[1].estimate", "M004",
                                              "sample.variableLengthSampleDtos[1].score", "M009",
@@ -717,9 +704,6 @@ public class DomainValidationTest {
                                              "sample.variableLengthSampleDtos[2].userId", "M013",
                                              "sample.variableLengthSampleDtos[2].userIds", "M013",
                                              "sample.variableLengthSampleDtos[2].name", "M015",
-                                             "sample.variableLengthSampleDtos[2].date", "M002",
-                                             "sample.variableLengthSampleDtos[2].status", "M014",
-                                             "sample.variableLengthSampleDtos[2].status2", "M014",
                                              "sample.variableLengthSampleDtos[2].registered", "M006",
                                              "sample.variableLengthSampleDtos[2].estimate", "M004",
                                              "sample.variableLengthSampleDtos[2].score", "M009");
@@ -752,7 +736,6 @@ public class DomainValidationTest {
         validators.add((Validator)repositoryResource.getComponent("requiredValidator"));
         validators.add((Validator)repositoryResource.getComponent("numberRangeValidator"));
         validators.add((Validator)repositoryResource.getComponent("lengthValidator"));
-        validators.add((Validator)repositoryResource.getComponent("codeValueValidator"));
         validators.add((Validator)repositoryResource.getComponent("systemCharValidator"));
         validators.add(domainValidator);
         validationManager.setValidators(validators);
@@ -766,9 +749,9 @@ public class DomainValidationTest {
         assertThat(context.createObject().getFreeText(), is("03"));
 
         // invalid
-        context = ValidationUtil.validateAndConvertRequest("sample", formClass, toParams("sample.freeText", "09"), "testDirectCallable");
+        context = ValidationUtil.validateAndConvertRequest("sample", formClass, toParams("sample.freeText", ""), "testDirectCallable");
         assertFalse(context.isValid());
-        assertMessages(context.getMessages(),"sample.freeText", "M014");
+        assertMessages(context.getMessages(),"sample.freeText", "M007");
     }
 
     private static ValidationContext<? extends TestForm> validate(Class<? extends TestForm> formClass, String... keyValues) {
